@@ -33,22 +33,21 @@ function liri(command, input) {
         // ----------------------------------------------------------------LIRI SEARCH---------------------------------------------//
 
         case 'do-what-it-says':
-
-            fs.readFile('random.txt', 'utf8', function (err, data) {
-                console.log(data);
-                var randomTxt = data.split(",");
-                process.argv[2] = randomTxt[0];
-                process.argv[3] = randomTxt[1];
-
-
-            });
-
-
-
+            randomTxt(input);
             break;
 
         default:
-            console.log("please put in a valid command");
+            console.log("-----------------------------------------------------------------------------------------------------------------");
+            console.log(
+                "Hello - I am Bob.  I am a Language Interpretation and Recognition Interface (LIRI)\n\n" +
+                "I can do a few different things if you tell me to.\n\n 1.) Information about upcoming concerts." +
+                "To tell me to fetch data about upcoming concerts enter the following after the 'node liri' command:\n\n" +
+                "concert-this '<artist/band name>'\n\n If the band or artist has spaces please put them in quotes - likes this: 'Avenged Sevenfold'\n\n" +
+                "2.) Informatiom about a song from Spotify.\n\n spotify-this-song '<song name here>'\n\n" +
+                "3.) Information about a movie from OMDB.\n\n movie-this '<movie name here>' \n\n" +
+                "4.) Run command from the random.txt file in one of the above command formats.\n\n do-what-it-say"
+
+            );
     }
 } // end of liri function
 
@@ -62,19 +61,24 @@ function venueSearch(input) {
 
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(
         function (response) {
-
-            //set up for loop so we get response for 5 venues - too much data IMO
-            console.log("Here are " + response.data.length + " upcoming concert venus for " + artist + ".\r\n");
+            console.log("Here are " + response.data.length + " upcoming concert venues for " + artist + ".\r\n");
             for (i = 0; i < response.data.length; i++) {
                 var venue = response.data[i].venue;
                 var date = response.data[i].datetime;
                 var formatDate = moment(date).format('MM/DD/YYYY');
                 var dateUntil = moment(date).diff(moment(), 'days');
-
-                console.log("This " + artist + " concert is at " + venue.name + ".");
-                console.log("The " + artist + " concert is located in " + venue.city + " " + venue.region + ", " + venue.country + ".");
-                console.log("The " + artist + " concert is on " + formatDate + ", this is in " + dateUntil + " days!");
-                console.log("------------------------------------------------------------------");
+                var logFileData = "The " + artist + " concert is at " + venue.name + ".\n" +
+                "The " + artist + " concert is located in " + venue.city + " " + venue.region + ", " + venue.country + ".\n" +
+                "The " + artist + " concert is on " + formatDate + ", this is in " + dateUntil + " days!\n" +
+                "------------------------------------------------------------------\n";
+                console.log(logFileData);
+        
+                
+                fs.appendFile('log.txt', logFileData, function (err) {
+                    if (err) {
+                        console.log('Error occured: ' + err)
+                    }
+                });
             }
         }
     );
@@ -197,5 +201,32 @@ function movieSearch(input) {
             console.log("Box Office: " + boxOffice);
             console.log("------------------------------------------------------------------");
         });
+
+}
+
+function randomTxt() {
+    fs.readFile('random.txt', 'utf8', function (err, data) {
+        var randomTxt = data.split(",");
+        process.argv[2] = randomTxt[0];
+        process.argv[3] = randomTxt[1];
+        if (process.argv[2] === 'concert-this') {
+            venueSearch(process.argv[3]);
+            return
+        }
+        if (process.argv[2] === 'spotify-this-song') {
+            spotifySearch(process.argv[3]);
+            return
+        }
+        if (process.argv[2] === 'movie-this') {
+            movieSearch(process.argv[3]);
+            return
+        }
+        else {
+            console.log('Please put a valid command inside of the random.txt file!');
+            console.log('There is something wrong with this  - check for typos: ' + data)
+        }
+    });
+
+
 
 }
