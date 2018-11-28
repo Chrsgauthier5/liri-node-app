@@ -67,18 +67,12 @@ function venueSearch(input) {
                 var date = response.data[i].datetime;
                 var formatDate = moment(date).format('MM/DD/YYYY');
                 var dateUntil = moment(date).diff(moment(), 'days');
-                var logFileData = "The " + artist + " concert is at " + venue.name + ".\n" +
-                "The " + artist + " concert is located in " + venue.city + " " + venue.region + ", " + venue.country + ".\n" +
-                "The " + artist + " concert is on " + formatDate + ", this is in " + dateUntil + " days!\n" +
-                "------------------------------------------------------------------\n";
-                console.log(logFileData);
-        
-                
-                fs.appendFile('log.txt', logFileData, function (err) {
-                    if (err) {
-                        console.log('Error occured: ' + err)
-                    }
-                });
+                var concertData = "The " + artist + " concert is at " + venue.name + ".\n" +
+                    "The " + artist + " concert is located in " + venue.city + " " + venue.region + ", " + venue.country + ".\n" +
+                    "The " + artist + " concert is on " + formatDate + ", this is in " + dateUntil + " days!\n" +
+                    "------------------------------------------------------------------\n";
+                console.log(concertData);
+                append(concertData);
             }
         }
     );
@@ -102,13 +96,16 @@ function spotifySearch(input) {
                 var artist = JSON.stringify(response.tracks.items[9].artists[0].name);//gets the song name
                 var spotifyLink = JSON.stringify(response.tracks.items[9].external_urls.spotify); //preview link from spotify
                 var album = JSON.stringify(response.tracks.items[9].album.name); //album name
-                console.log("You didn't input a song, here is the information for 'The Sign' by Ace of Base.");
-                console.log("-----------------------------------------------------------------------------------");
-                console.log("The artist of this song is " + artist);
-                console.log("The name of this song is " + song);
-                console.log("Link to this song on Spotify: " + spotifyLink);
-                console.log(song + " is from the album " + album);
-                console.log("------------------------------------------------------------------------------------");
+                var spotifyDataUndefined = "You didn't input a song, here is the information for 'The Sign' by Ace of Base.\n" +
+                    "-----------------------------------------------------------------------------------\n" +
+                    + "The artist of this song is " + artist + "\n" +
+                    "The name of this song is " + song + '\n' +
+                    "Link to this song on Spotify: " + spotifyLink + '\n' +
+                    song + " is from the album " + album + '\n' +
+                    "------------------------------------------------------------------------------------\n";
+
+                console.log(spotifyDataUndefined);
+                append(spotifyDataUndefined);
 
             })
             .catch(function (err) {
@@ -126,12 +123,13 @@ function spotifySearch(input) {
                 var song = JSON.stringify(response.tracks.items[i].name); //gets the song name
                 var spotifyLink = JSON.stringify(response.tracks.items[i].external_urls.spotify); //preview link from spotify
                 var album = JSON.stringify(response.tracks.items[i].album.name); //album name
-
-                console.log("The artist of this song is " + artist);
-                console.log("The name of this song is " + song);
-                console.log("Link to this song on Spotify: " + spotifyLink);
-                console.log(song + " is from the album " + album);
-                console.log("------------------------------------------------------------------");
+                var spotifyData = "The artist of this song is " + artist + '\n' +
+                    "The name of this song is " + song + '\n' +
+                    "Link to this song on Spotify: " + spotifyLink + '\n' +
+                    song + " is from the album " + album + '\n' +
+                    "------------------------------------------------------------------\n";
+                console.log(spotifyData);
+                append(spotifyData);
             }
         })
         .catch(function (err) {
@@ -161,16 +159,17 @@ function movieSearch(input) {
                 var plot = response.data.Plot;
                 var actors = response.data.Actors;
                 var boxOffice = response.data.BoxOffice;
-                console.log('Movie Title: ' + title);
-                console.log('Release year: ' + year);
-                console.log("Rating source: " + ratingImdb + ', Score: ' + ratingImdbScore);
-                console.log("Rating source: " + ratingRotten + ', Score: ' + ratingRottenScore);
-                console.log("Country of Production: " + country);
-                console.log("Language: " + language);
-                console.log("Plot summary: " + plot);
-                console.log("Main actors: " + actors);
-                console.log("Box Office: " + boxOffice);
-                console.log("------------------------------------------------------------------");
+                var mrNobody = 'Movie Title: ' + title + "\n" + 'Release year: ' + year + "\n" +
+                "Rating source: " + ratingImdb + ', Score: ' + ratingImdbScore + "\n" +
+                "Rating source: " + ratingRotten + ', Score: ' + ratingRottenScore + "\n" +
+                "Country of Production: " + country + "\n" +
+                "Language: " + language + "\n" +
+                "Plot summary: " + plot + "\n" +
+                "Main actors: " + actors + "\n" +
+                "Box Office: " + boxOffice + "\n" +
+                "------------------------------------------------------------------";
+                console.log(mrNobody);
+                append(mrNobody);
             });
         return
     }
@@ -190,16 +189,17 @@ function movieSearch(input) {
             var plot = response.data.Plot;
             var actors = response.data.Actors;
             var boxOffice = response.data.BoxOffice;
-            console.log('Movie Title: ' + title);
-            console.log('Release year: ' + year);
-            console.log("Rating source: " + ratingImdb + ', Score: ' + ratingImdbScore);
-            console.log("Rating source: " + ratingRotten + ', Score: ' + ratingRottenScore);
-            console.log("Country of Production: " + country);
-            console.log("Language: " + language);
-            console.log("Plot summary " + plot);
-            console.log("Main actors: " + actors);
-            console.log("Box Office: " + boxOffice);
-            console.log("------------------------------------------------------------------");
+            var movieData = 'Movie Title: ' + title + "\n" + 'Release year: ' + year + "\n" +
+                "Rating source: " + ratingImdb + ', Score: ' + ratingImdbScore + "\n" +
+                "Rating source: " + ratingRotten + ', Score: ' + ratingRottenScore + "\n" +
+                "Country of Production: " + country + "\n" +
+                "Language: " + language + "\n" +
+                "Plot summary: " + plot + "\n" +
+                "Main actors: " + actors + "\n" +
+                "Box Office: " + boxOffice + "\n" +
+                "------------------------------------------------------------------";
+            console.log(movieData);
+            append(movieData);
         });
 
 }
@@ -229,4 +229,12 @@ function randomTxt() {
 
 
 
+}
+
+function append(data) {
+    fs.appendFile('log.txt', data, function (err) {
+        if (err) {
+            console.log('Error occured: ' + err)
+        }
+    });
 }
